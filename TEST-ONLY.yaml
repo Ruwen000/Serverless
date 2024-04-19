@@ -1,0 +1,58 @@
+const { app } = require('@azure/functions');
+
+app.http('dreiecken1', {
+    methods: ['GET', 'POST'],
+    authLevel: 'anonymous',
+    handler: async (request, context) => {
+        context.log(`Http function processed request for url "${request.url}"`);
+
+        const name = request.query.get('name') || await request.text() || 'world';
+
+
+
+
+
+        context.log('JavaScript HTTP trigger function processed a request.');
+        
+        // Extracting the Celsius temperature from the query string or request body
+        const Punkt1 = req.query.p1 || (req.body && req.body.p1);
+        const Punkt2 = req.query.p2 || (req.body && req.body.p2);
+        const Punkt3 = req.query.p3 || (req.body && req.body.p3);
+        const Punkt4 = req.query.p4 || (req.body && req.body.p4);
+    
+        if (!Punkt1 && !Punkt2 && !Punkt3 && Punkt4) {
+            context.res = {
+                status: 400, // Bad Request
+                body: "Schlechte Nummern."
+            };
+            return;
+        }
+       
+        function point_in_fucking_triangle_or_not_you_shit(point, A,  B,  C) {
+            // Calculate barycentric coordinates
+            const denominator = (B[1] - C[1]) * (A[0] - C[0]) + (C[0] - B[0]) * (A[1] - C[1]);
+            const alpha = ((B[1] - C[1]) * (point[0] - C[0]) + (C[0] - B[0]) * (point[1] - C[1])) / denominator;
+            const beta = ((C[1] - A[1]) * (point[0] - C[0]) + (A[0] - C[0]) * (point[1] - C[1])) / denominator;
+            const gamma = 1 - alpha - beta;
+    
+            // Check if point is inside the triangle
+            return alpha > 0 && beta > 0 && gamma > 0;   
+        }
+       
+        const responseMessage = `im Dreieck: ${point_in_fucking_triangle_or_not_you_shit(Punkt1, Punkt2, Punkt3, Punkt4)}`;
+    
+        context.res = {
+            // status: 200, /* Defaults to 200 */
+            body: responseMessage
+        };
+
+
+
+
+
+
+
+
+        return { body: `Hello, ${name}!` };
+    }
+});
