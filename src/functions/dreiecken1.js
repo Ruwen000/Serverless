@@ -11,10 +11,24 @@ app.http('dreiecken1', {
         const B = [parseFloat(request.query.get('Bx')), parseFloat(request.query.get('By'))];
         const C = [parseFloat(request.query.get('Cx')), parseFloat(request.query.get('Cy'))];
         const point = [parseFloat(request.query.get('Px')), parseFloat(request.query.get('Py'))];
+        
+       // If not all parameters are provided in the query string, try to extract from the request body
+       if (!A.every(x => !isNaN(x)) || !B.every(x => !isNaN(x)) || !C.every(x => !isNaN(x)) || !point.every(x => !isNaN(x))) {
+        const requestBody = await request.json();
+        if (requestBody) {
+            A[0] = parseFloat(requestBody.Ax);
+            A[1] = parseFloat(requestBody.Ay);
+            B[0] = parseFloat(requestBody.Bx);
+            B[1] = parseFloat(requestBody.By);
+            C[0] = parseFloat(requestBody.Cx);
+            C[1] = parseFloat(requestBody.Cy);
+            point[0] = parseFloat(requestBody.Px);
+            point[1] = parseFloat(requestBody.Py);
+        }
+    }
 
         // Calculate if the point is inside the triangle
         const isInside = pointInTriangle(point, A, B, C);
-
         return { body: `Point is inside triangle: ${isInside}` };
     }
 });
